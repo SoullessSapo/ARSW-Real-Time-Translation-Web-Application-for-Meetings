@@ -22,22 +22,6 @@ Esta es una aplicación web que permite la traducción en tiempo real de convers
 - **Base de datos:** PostgreSQL 
 - **Despliegue:**  AWS o Azure 
 
-## Instalación y ejecución
-
-1. Clona este repositorio:
-    ```bash
-    git clone https://github.com/tuusuario/tu-repo-traduccion-web.git
-    ```
-2. Instala las dependencias:
-    ```bash
-    cd tu-repo-traduccion-web
-    npm install
-    ```
-3. Configura las variables de entorno según el archivo `.env.example`.
-4. Inicia el proyecto:
-    ```bash
-    npm run dev
-    ```
 
 ## Criterios de Aceptación
 

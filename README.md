@@ -90,5 +90,4 @@ This web application enables real-time translation in virtual meetings, supporti
 - [ ] Users can access meeting transcripts and (optionally) audio playback.
 - [ ] Translation and voice output have 2 seconds or less latency.
 - [ ] The UI is responsive and works on desktop and mobile browsers.
-- [ ] Data privacy and security is guaranteed.
 - [ ] The app works correctly on major

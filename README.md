@@ -18,8 +18,8 @@ This is a web application that enables real-time translation of text and voice c
 - **Backend:** Node.js + Express or NestJS  
 - **Translation APIs:** Google Cloud Translation, Azure Translator  
 - **Speech Processing:** Web Speech API, external services  
-- **Database:** PostgreSQL or MongoDB  
-- **Deployment:** Vercel, AWS, Azure, or similar
+- **Database:** PostgreSQL 
+- **Deployment:** AWS or Azure
 
 ## Installation & Usage
 

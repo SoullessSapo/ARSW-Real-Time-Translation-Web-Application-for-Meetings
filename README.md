@@ -1,57 +1,112 @@
-# ARSW-proyecto
-# Aplicación Web de Traducción en Tiempo Real
+# Real-Time Translation Web Application
 
-## Descripción
+## Description
 
-Esta es una aplicación web que permite la traducción en tiempo real de conversaciones de texto y voz entre diferentes idiomas. El objetivo es facilitar la comunicación entre personas de distintas lenguas de manera fluida y accesible desde cualquier navegador web.
+This is a web application that enables real-time translation of text and voice conversations between different languages. The goal is to facilitate smooth communication between people of different languages, accessible from any web browser.
 
-## Características principales
+## Key Features
 
-- Traducción instantánea de texto y voz en múltiples idiomas.
-- Interfaz de usuario sencilla, moderna y responsiva.
-- Detección automática del idioma de entrada.
-- Historial de conversaciones traducidas.
-- Acceso desde cualquier dispositivo sin instalación.
+- Instant translation of text and voice in multiple languages.
+- Simple, modern, and responsive user interface.
+- Automatic detection of input language.
+- Conversation history.
+- Accessible from any device without installation.
 
-## Tecnologías utilizadas
+## Technologies Used
 
 - **Frontend:** React / Next.js  
-- **Backend:** Node.js + Express o NestJS  
-- **APIs de traducción:** Google Cloud Translation, Azure Translator  
-- **Procesamiento de voz:** Web Speech API, servicios externos  
-- **Base de datos:** PostgreSQL 
-- **Despliegue:**  AWS o Azure 
+- **Backend:** Node.js + Express or NestJS  
+- **Translation APIs:** Google Cloud Translation, Azure Translator  
+- **Speech Processing:** Web Speech API, external services  
+- **Database:** PostgreSQL or MongoDB  
+- **Deployment:** Vercel, AWS, Azure, or similar
+
+## Installation & Usage
+
+1. Clone this repository:
+    ```bash
+    git clone https://github.com/youruser/your-realtime-translation-web.git
+    ```
 
 
-## Criterios de Aceptación
+## User Stories
 
-- [ ] El usuario puede escribir mensajes y recibir traducción automática en tiempo real.
-- [ ] El usuario puede utilizar la entrada de voz y recibir traducción de voz a texto.
-- [ ] El sistema detecta automáticamente el idioma de entrada.
-- [ ] La respuesta de traducción es igual o menor a 2 segundos.
-- [ ] El usuario puede ver el historial de conversaciones traducidas.
-- [ ] La interfaz es responsiva y funciona en escritorio y móvil.
-- [ ] El sistema garantiza privacidad y seguridad en el manejo de datos.
-- [ ] Soporte para al menos 5 idiomas principales en la versión inicial.
-- [ ] La aplicación funciona correctamente en los principales navegadores (Chrome, Firefox, Edge).
+### End User
 
-## Contribución
+#### Story 1: Real-time Text Translation  
+**As** a user,  
+**I want** to write messages in my language and have them automatically translated into my conversation partner’s language,  
+**so that** I can communicate easily regardless of the languages we speak.
 
-¿Quieres aportar al proyecto? ¡Bienvenido!
-- Haz un fork de este repositorio.
-- Crea una rama (`git checkout -b feature/nueva-funcionalidad`).
-- Realiza tus cambios y haz commit (`git commit -am 'Agrega nueva funcionalidad'`).
-- Sube tu rama (`git push origin feature/nueva-funcionalidad`).
-- Abre un Pull Request para revisión.
-
-## Licencia
-
-Este proyecto está bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
-
-## Créditos
-
-Desarrollado por [Esteban Valencia] — 2025  
-Inspirado en la necesidad de eliminar barreras idiomáticas.
+**Acceptance Criteria:**  
+- The user can write and send text messages.
+- The system translates and displays the message in the selected language of the conversation partner.
+- Translation occurs within 2 seconds or less.
 
 ---
 
+#### Story 2: Real-time Voice Translation  
+**As** a user,  
+**I want** to speak using my microphone and have what I say translated and shown as text in my conversation partner’s language,  
+**so that** I can communicate fluently using voice.
+
+**Acceptance Criteria:**  
+- The user can activate the microphone and dictate a message.
+- The system converts voice to text, translates it, and displays it to the conversation partner.
+- Translation occurs within 2 seconds or less.
+
+---
+
+#### Story 3: Automatic Language Detection  
+**As** a user,  
+**I want** the system to automatically detect the language I’m speaking or writing in,  
+**so that** I don’t have to manually select my language each time.
+
+**Acceptance Criteria:**  
+- The system identifies the input message language (text or voice) automatically.
+- Translation works correctly without requiring the user to specify their language.
+
+---
+
+#### Story 4: Conversation & Translation History  
+**As** a user,  
+**I want** to see a history of my previous conversations and translations,  
+**so that** I can review or revisit important information.
+
+**Acceptance Criteria:**  
+- The user can view past conversation sessions.
+- The system stores and retrieves translation history securely.
+
+---
+
+## Acceptance Criteria (Checklist)
+
+- [ ] User can send and receive real-time translated text messages.
+- [ ] User can speak and have their speech translated to text in real-time.
+- [ ] System detects input language automatically.
+- [ ] Translation latency is 2 seconds or less.
+- [ ] Conversation and translation history is accessible to the user.
+- [ ] The UI is responsive and works on both desktop and mobile browsers.
+- [ ] The app supports at least 5 major languages in the initial version.
+- [ ] Data privacy and security is guaranteed.
+- [ ] The app works correctly on major browsers (Chrome, Firefox, Edge).
+
+## Contributing
+
+Want to contribute? Welcome!
+- Fork this repository.
+- Create a branch (`git checkout -b feature/new-feature`).
+- Commit your changes (`git commit -am 'Add new feature'`).
+- Push your branch (`git push origin feature/new-feature`).
+- Open a Pull Request for review.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Credits
+
+Developed by [Your Name] — 2025  
+Inspired by the need to break down language barriers.
+
+---

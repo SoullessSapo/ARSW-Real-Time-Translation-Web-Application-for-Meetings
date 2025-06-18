@@ -21,7 +21,7 @@ This web application enables real-time translation in virtual meetings, supporti
 - **Speech Processing:** Web Speech API, Google Cloud Text-to-Speech  
 - **AI Summarization:** OpenAI GPT, Azure OpenAI, or similar  
 - **Database:** PostgreSQL or MongoDB  
-- **Deployment:** Vercel, AWS, Azure, or similar
+- **Deployment:** AWS or Azure
 
 ## Installation & Usage
 

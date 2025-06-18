@@ -15,67 +15,74 @@ This web application enables real-time translation in virtual meetings, supporti
 
 ## Technologies Used
 
-- **Frontend:** React / Next.js  
-- **Backend:** Node.js + Express or NestJS  
-- **Translation APIs:** Google Cloud Translation, Azure Translator  
-- **Speech Processing:** Web Speech API, Google Cloud Text-to-Speech  
-- **AI Summarization:** OpenAI GPT, Azure OpenAI, or similar  
-- **Database:** PostgreSQL or MongoDB  
+- **Frontend:** React / Next.js
+- **Backend:** Node.js + Express or NestJS
+- **Translation APIs:** Google Cloud Translation, Azure Translator
+- **Speech Processing:** Web Speech API, Google Cloud Text-to-Speech
+- **AI Summarization:** OpenAI GPT, Azure OpenAI, or similar
+- **Database:** PostgreSQL or MongoDB
 - **Deployment:** AWS or Azure
 
 ## Installation & Usage
 
 1. Clone this repository:
-    ```bash
-    git clone https://github.com/youruser/your-realtime-meeting-translation.git
-    ```
-
+   ```bash
+   git clone https://github.com/youruser/your-realtime-meeting-translation.git
+   ```
 
 ## User Stories
 
 ### End User
 
-#### Story 1: Real-Time Multilingual Meeting  
+#### Story 1: Real-Time Multilingual Meeting
+
 **As** a meeting participant,  
 **I want** to speak in my own language and hear other participants in my language through a synthetic voice,  
 **so that** I can fully participate in multilingual meetings as if everyone spoke my language.
 
-**Acceptance Criteria:**  
+**Acceptance Criteria:**
+
 - The user can join a meeting and speak in their language.
 - The system detects the input language, translates, and outputs translated speech via Text-to-Speech in real time for each participant.
 - Latency of translation and voice output is 2 seconds or less.
 
 ---
 
-#### Story 2: Real-Time Text and Chat Translation  
+#### Story 2: Real-Time Text and Chat Translation
+
 **As** a meeting participant,  
 **I want** to send written messages that are automatically translated for other participants,  
 **so that** written communication in meetings is barrier-free.
 
-**Acceptance Criteria:**  
+**Acceptance Criteria:**
+
 - The user can send chat messages during the meeting.
 - The system automatically translates and displays messages in each participant’s chosen language.
 - Chat translations appear in less than 2 seconds.
 
 ---
 
-#### Story 3: AI-Powered Meeting Summary  
+#### Story 3: AI-Powered Meeting Summary
+
 **As** a user,  
 **I want** to receive an AI-generated summary of the meeting,  
 **so that** I can quickly review the most important points and actions.
 
-**Acceptance Criteria:**  
+**Acceptance Criteria:**
+
 - After the meeting, the user can request a summary.
 - The system uses an AI API to generate and display a concise, accurate meeting summary.
 
 ---
 
-#### Story 4: Conversation and Audio History  
+#### Story 4: Conversation and Audio History
+
 **As** a user,  
 **I want** to access the meeting transcript and audio history,  
 **so that** I can review previous discussions and translations.
 
-**Acceptance Criteria:**  
+**Acceptance Criteria:**
+
 - The user can view transcripts and, optionally, listen to past meeting translations.
 - The system securely stores and retrieves audio and text history.
 
@@ -91,3 +98,15 @@ This web application enables real-time translation in virtual meetings, supporti
 - [ ] Translation and voice output have 2 seconds or less latency.
 - [ ] The UI is responsive and works on desktop and mobile browsers.
 - [ ] The app works correctly on major
+
+## Database Diagram
+
+<!--
+  Include your ERD or database schema here.
+  You can embed an image using the markdown syntax below,
+  or describe the schema if you don't have a diagram yet.
+-->
+
+![Database Diagram](resources/databaseDiagram.png)
+
+_The diagram above shows the structure of tables and relationships used in this application._

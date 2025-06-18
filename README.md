@@ -19,8 +19,8 @@ Esta es una aplicación web que permite la traducción en tiempo real de convers
 - **Backend:** Node.js + Express o NestJS  
 - **APIs de traducción:** Google Cloud Translation, Azure Translator  
 - **Procesamiento de voz:** Web Speech API, servicios externos  
-- **Base de datos:** PostgreSQL o MongoDB  
-- **Despliegue:** Vercel, AWS, Azure o similares
+- **Base de datos:** PostgreSQL 
+- **Despliegue:**  AWS o Azure 
 
 ## Instalación y ejecución
 

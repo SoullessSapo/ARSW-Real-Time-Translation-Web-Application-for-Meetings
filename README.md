@@ -1,31 +1,33 @@
-# Real-Time Translation Web Application
+# Real-Time Translation Web Application for Meetings
 
 ## Description
 
-This is a web application that enables real-time translation of text and voice conversations between different languages. The goal is to facilitate smooth communication between people of different languages, accessible from any web browser.
+This web application enables real-time translation in virtual meetings, supporting both text and speech. It uses advanced translation and speech synthesis so each participant can hear others in their preferred language, as if everyone spoke the same language. At the end of the meeting, users can generate an automatic meeting summary powered by artificial intelligence.
 
 ## Key Features
 
-- Instant translation of text and voice in multiple languages.
-- Simple, modern, and responsive user interface.
+- Real-time translation of text and voice for multiple meeting participants.
+- Synthetic voice (Text-to-Speech) speaks translations aloud in the selected language.
+- AI-powered meeting summary available after each session.
+- Simple, modern, and responsive web interface.
 - Automatic detection of input language.
-- Conversation history.
-- Accessible from any device without installation.
+- Conversation and audio history.
 
 ## Technologies Used
 
 - **Frontend:** React / Next.js  
 - **Backend:** Node.js + Express or NestJS  
 - **Translation APIs:** Google Cloud Translation, Azure Translator  
-- **Speech Processing:** Web Speech API, external services  
-- **Database:** PostgreSQL 
-- **Deployment:** AWS or Azure
+- **Speech Processing:** Web Speech API, Google Cloud Text-to-Speech  
+- **AI Summarization:** OpenAI GPT, Azure OpenAI, or similar  
+- **Database:** PostgreSQL or MongoDB  
+- **Deployment:** Vercel, AWS, Azure, or similar
 
 ## Installation & Usage
 
 1. Clone this repository:
     ```bash
-    git clone https://github.com/youruser/your-realtime-translation-web.git
+    git clone https://github.com/youruser/your-realtime-meeting-translation.git
     ```
 
 
@@ -33,79 +35,60 @@ This is a web application that enables real-time translation of text and voice c
 
 ### End User
 
-#### Story 1: Real-time Text Translation  
-**As** a user,  
-**I want** to write messages in my language and have them automatically translated into my conversation partner’s language,  
-**so that** I can communicate easily regardless of the languages we speak.
+#### Story 1: Real-Time Multilingual Meeting  
+**As** a meeting participant,  
+**I want** to speak in my own language and hear other participants in my language through a synthetic voice,  
+**so that** I can fully participate in multilingual meetings as if everyone spoke my language.
 
 **Acceptance Criteria:**  
-- The user can write and send text messages.
-- The system translates and displays the message in the selected language of the conversation partner.
-- Translation occurs within 2 seconds or less.
+- The user can join a meeting and speak in their language.
+- The system detects the input language, translates, and outputs translated speech via Text-to-Speech in real time for each participant.
+- Latency of translation and voice output is 2 seconds or less.
 
 ---
 
-#### Story 2: Real-time Voice Translation  
-**As** a user,  
-**I want** to speak using my microphone and have what I say translated and shown as text in my conversation partner’s language,  
-**so that** I can communicate fluently using voice.
+#### Story 2: Real-Time Text and Chat Translation  
+**As** a meeting participant,  
+**I want** to send written messages that are automatically translated for other participants,  
+**so that** written communication in meetings is barrier-free.
 
 **Acceptance Criteria:**  
-- The user can activate the microphone and dictate a message.
-- The system converts voice to text, translates it, and displays it to the conversation partner.
-- Translation occurs within 2 seconds or less.
+- The user can send chat messages during the meeting.
+- The system automatically translates and displays messages in each participant’s chosen language.
+- Chat translations appear in less than 2 seconds.
 
 ---
 
-#### Story 3: Automatic Language Detection  
+#### Story 3: AI-Powered Meeting Summary  
 **As** a user,  
-**I want** the system to automatically detect the language I’m speaking or writing in,  
-**so that** I don’t have to manually select my language each time.
+**I want** to receive an AI-generated summary of the meeting,  
+**so that** I can quickly review the most important points and actions.
 
 **Acceptance Criteria:**  
-- The system identifies the input message language (text or voice) automatically.
-- Translation works correctly without requiring the user to specify their language.
+- After the meeting, the user can request a summary.
+- The system uses an AI API to generate and display a concise, accurate meeting summary.
 
 ---
 
-#### Story 4: Conversation & Translation History  
+#### Story 4: Conversation and Audio History  
 **As** a user,  
-**I want** to see a history of my previous conversations and translations,  
-**so that** I can review or revisit important information.
+**I want** to access the meeting transcript and audio history,  
+**so that** I can review previous discussions and translations.
 
 **Acceptance Criteria:**  
-- The user can view past conversation sessions.
-- The system stores and retrieves translation history securely.
+- The user can view transcripts and, optionally, listen to past meeting translations.
+- The system securely stores and retrieves audio and text history.
 
 ---
 
 ## Acceptance Criteria (Checklist)
 
-- [ ] User can send and receive real-time translated text messages.
-- [ ] User can speak and have their speech translated to text in real-time.
-- [ ] System detects input language automatically.
-- [ ] Translation latency is 2 seconds or less.
-- [ ] Conversation and translation history is accessible to the user.
-- [ ] The UI is responsive and works on both desktop and mobile browsers.
-- [ ] The app supports at least 5 major languages in the initial version.
-- [ ] The app works correctly on major browsers (Chrome, Firefox, Edge).
-
-## Contributing
-
-Want to contribute? Welcome!
-- Fork this repository.
-- Create a branch (`git checkout -b feature/new-feature`).
-- Commit your changes (`git commit -am 'Add new feature'`).
-- Push your branch (`git push origin feature/new-feature`).
-- Open a Pull Request for review.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Credits
-
-Developed by [Your Name] — 2025  
-Inspired by the need to break down language barriers.
-
----
+- [ ] Users can join a virtual meeting and communicate in their own language.
+- [ ] The system translates and speaks each participant’s input in real time via synthetic voice.
+- [ ] Chat messages are translated automatically for each participant.
+- [ ] AI-generated meeting summaries are available after each meeting.
+- [ ] Users can access meeting transcripts and (optionally) audio playback.
+- [ ] Translation and voice output have 2 seconds or less latency.
+- [ ] The UI is responsive and works on desktop and mobile browsers.
+- [ ] Data privacy and security is guaranteed.
+- [ ] The app works correctly on major

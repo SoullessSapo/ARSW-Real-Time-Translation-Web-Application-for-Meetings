@@ -88,7 +88,6 @@ This is a web application that enables real-time translation of text and voice c
 - [ ] Conversation and translation history is accessible to the user.
 - [ ] The UI is responsive and works on both desktop and mobile browsers.
 - [ ] The app supports at least 5 major languages in the initial version.
-- [ ] Data privacy and security is guaranteed.
 - [ ] The app works correctly on major browsers (Chrome, Firefox, Edge).
 
 ## Contributing

@@ -24,10 +24,12 @@ export class Meeting {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by' })
   createdBy: User;
-
+  @Column({ length: 20, default: 'public' }) // valores: 'public', 'private', 'friends'
+  type: string;
   @Column({ type: 'timestamp', nullable: true })
   scheduledAt: Date;
-
+  @Column({ type: 'timestamp', nullable: true })
+  pendingDeleteAt: Date | null;
   @OneToMany(() => MeetingParticipant, (mp) => mp.meeting)
   participants: MeetingParticipant[];
 

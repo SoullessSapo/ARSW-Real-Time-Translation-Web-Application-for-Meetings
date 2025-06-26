@@ -7,6 +7,8 @@ import { Message } from './message.entity';
 import { Translation } from './translation.entity';
 import { Audio } from './audio.entity';
 import { Summary } from './summary.entity';
+import { MeetingInvitation } from './meeting-invitation.entity';
+import { Friendship } from './friendship.entity';
 
 // ...existing code...
 @Module({
@@ -19,6 +21,8 @@ import { Summary } from './summary.entity';
       Translation,
       Audio,
       Summary,
+      MeetingInvitation,
+      Friendship,
     ]),
   ],
   exports: [TypeOrmModule],

@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { MeetingParticipant } from './meeting-participant.entity.ts';
+import { MeetingParticipant } from './meeting-participant.entity';
 
 @Entity('users')
 export class User {

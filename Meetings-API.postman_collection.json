@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "Meetings API",
+    "_postman_id": "1d5e0138-2bb8-4b80-ae5e-55f6ba0fb000",
+    "description": "API para gestión de reuniones, amistad e invitaciones.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": "REPLACE_WITH_JWT_TOKEN"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Meeting",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Clase de Francés\",\n  \"type\": \"private\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/create",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "create"]
+        }
+      }
+    },
+    {
+      "name": "Join Meeting",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"meetingId\": \"REPLACE_WITH_MEETING_ID\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/join",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "join"]
+        }
+      }
+    },
+    {
+      "name": "Leave Meeting",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"meetingId\": \"REPLACE_WITH_MEETING_ID\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/leave",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "leave"]
+        }
+      }
+    },
+    {
+      "name": "List Meeting Participants",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{base_url}}/meetings/REPLACE_WITH_MEETING_ID/participants",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "REPLACE_WITH_MEETING_ID", "participants"]
+        }
+      }
+    },
+    {
+      "name": "Send Friend Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"addresseeId\": \"REPLACE_WITH_USER_ID\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/friend/request",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "friend", "request"]
+        }
+      }
+    },
+    {
+      "name": "Accept Friend Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requesterId\": \"REPLACE_WITH_USER_ID\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/friend/accept",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "friend", "accept"]
+        }
+      }
+    },
+    {
+      "name": "List Friends",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{base_url}}/meetings/friend/list",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "friend", "list"]
+        }
+      }
+    },
+    {
+      "name": "List Pending Friend Requests",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{base_url}}/meetings/friend/requests",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "friend", "requests"]
+        }
+      }
+    },
+    {
+      "name": "Invite to Meeting",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"meetingId\": \"REPLACE_WITH_MEETING_ID\",\n  \"invitedId\": \"REPLACE_WITH_USER_ID\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/invite",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "invite"]
+        }
+      }
+    },
+    {
+      "name": "List Pending Meeting Invitations",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{base_url}}/meetings/invite/pending",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "invite", "pending"]
+        }
+      }
+    },
+    {
+      "name": "Accept Meeting Invitation",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"invitationId\": \"REPLACE_WITH_INVITATION_ID\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/meetings/invite/accept",
+          "host": ["{{base_url}}"],
+          "path": ["meetings", "invite", "accept"]
+        }
+      }
+    }
+  ]
+}

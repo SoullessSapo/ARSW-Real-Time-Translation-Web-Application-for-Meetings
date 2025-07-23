@@ -110,3 +110,215 @@ This web application enables real-time translation in virtual meetings, supporti
 ![Database Diagram](resources/databaseDiagram.png)
 
 _The diagram above shows the structure of tables and relationships used in this application._
+
+## Friendship API
+
+The Friendship API allows users to manage their friends within the application. All endpoints require authentication via JWT (use the `Authorization: Bearer <token>` header).
+
+### Endpoints
+
+#### Add Friend Request
+
+**POST** `/friendship/request`
+
+Request body:
+
+```json
+{
+  "addresseeName": "<username>"
+}
+```
+
+Example curl:
+
+```bash
+curl -X POST http://localhost:3001/friendship/request \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"addresseeName": "alice"}'
+```
+
+---
+
+#### Accept Friendship
+
+**POST** `/friendship/accept`
+
+Request body:
+
+```json
+{
+  "requesterId": "<userId>"
+}
+```
+
+Example curl:
+
+```bash
+curl -X POST http://localhost:3001/friendship/accept \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"requesterId": "1234-5678-90ab-cdef"}'
+```
+
+---
+
+#### List Friends
+
+**GET** `/friendship/list`
+
+Example curl:
+
+```bash
+curl -X GET http://localhost:3001/friendship/list \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+---
+
+#### List Pending Friend Requests
+
+**GET** `/friendship/requests`
+
+Example curl:
+
+```bash
+curl -X GET http://localhost:3001/friendship/requests \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+---
+
+## Meetings API
+
+The Meetings API permite crear, unirse, salir, invitar y listar participantes de reuniones. Todos los endpoints requieren autenticación JWT (`Authorization: Bearer <token>`).
+
+### Endpoints
+
+#### Crear reunión
+
+**POST** `/meetings/create`
+
+Request body:
+
+```json
+{
+  "title": "Project Sync",
+  "type": "public" // o "private", "friends"
+}
+```
+
+Ejemplo curl:
+
+```bash
+curl -X POST http://localhost:3001/meetings/create \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Project Sync", "type": "public"}'
+```
+
+---
+
+#### Unirse a reunión
+
+**POST** `/meetings/join`
+
+Request body:
+
+```json
+{
+  "meetingId": "<meeting-uuid>"
+}
+```
+
+Ejemplo curl:
+
+```bash
+curl -X POST http://localhost:3001/meetings/join \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"meetingId": "<meeting-uuid>"}'
+```
+
+---
+
+#### Salir de reunión
+
+**POST** `/meetings/leave`
+
+Request body:
+
+```json
+{
+  "meetingId": "<meeting-uuid>"
+}
+```
+
+Ejemplo curl:
+
+```bash
+curl -X POST http://localhost:3001/meetings/leave \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"meetingId": "<meeting-uuid>"}'
+```
+
+---
+
+#### Ver participantes activos
+
+**GET** `/meetings/<meetingId>/participants`
+
+Ejemplo curl:
+
+```bash
+curl -X GET http://localhost:3001/meetings/<meetingId>/participants \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+---
+
+#### Invitar a reunión privada
+
+**POST** `/meetings/invite`
+
+Request body:
+
+```json
+{
+  "meetingId": "<meeting-uuid>",
+  "invitedId": "<user-uuid>"
+}
+```
+
+Ejemplo curl:
+
+```bash
+curl -X POST http://localhost:3001/meetings/invite \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"meetingId": "<meeting-uuid>", "invitedId": "<user-uuid>"}'
+```
+
+---
+
+#### Aceptar invitación a reunión
+
+**POST** `/meetings/invite/accept`
+
+Request body:
+
+```json
+{
+  "invitationId": "<invitation-uuid>"
+}
+```
+
+Ejemplo curl:
+
+```bash
+curl -X POST http://localhost:3001/meetings/invite/accept \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"invitationId": "<invitation-uuid>"}'
+```

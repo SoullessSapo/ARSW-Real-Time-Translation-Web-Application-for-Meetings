@@ -11,7 +11,6 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetUser } from './get-user.decorator';
 import { User } from '../entities/user.entity';
 import { LoginDto } from './dto/login.dto'; // Ajusta el path según tu estructura
-import { RegisterDto } from './dto/register.dto'; // Importa el DTO
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -35,9 +34,5 @@ export class AuthController {
   @Get('me')
   getProfile(@GetUser() user: User) {
     return user;
-  }
-  @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
   }
 }

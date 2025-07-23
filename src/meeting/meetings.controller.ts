@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import {
   Controller,
   Post,
@@ -7,13 +8,13 @@ import {
   Param,
   Request,
 } from '@nestjs/common';
+import { Delete, HttpCode } from '@nestjs/common'; // arriba
+
 import { MeetingsService } from './meeting.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import {
   CreateMeetingDto,
-  AcceptFriendshipDto,
   AcceptInvitationDto,
-  AddFriendDto,
   InviteMeetingDto,
   JoinLeaveMeetingDto,
 } from './dto/meeting.dto';
@@ -21,6 +22,7 @@ import {
 @UseGuards(JwtAuthGuard)
 @Controller('meetings')
 export class MeetingsController {
+  private readonly logger = new Logger(MeetingsController.name);
   constructor(private readonly meetingsService: MeetingsService) {}
 
   // Crear reunión
@@ -50,40 +52,44 @@ export class MeetingsController {
     @Request() req: { user: { id: string } },
     @Body() dto: JoinLeaveMeetingDto,
   ) {
+    this.logger.log(
+      `[POST /meetings/leave] user: ${JSON.stringify(req.user)}, body: ${JSON.stringify(dto)}`,
+    );
     return this.meetingsService.leaveMeeting(
       String(dto.meetingId),
       String(req.user.id),
     );
   }
+  @Delete(':meetingId')
+  @HttpCode(204)
+  async deleteMeeting(
+    @Request() req: { user: { id: string } },
+    @Param('meetingId') meetingId: string,
+  ) {
+    await this.meetingsService.deleteMeeting(meetingId, req.user.id);
+  }
+
+  // Listar todas las reuniones (puedes filtrar solo activas, públicas, etc.)
+  @Get('all')
+  async listAllMeetings() {
+    return this.meetingsService.listAllMeetings();
+  }
+  @Get('friends/:userId')
+  async listFriendsMeetings(@Param('userId') userId: string) {
+    return this.meetingsService.listFriendsMeetings(userId);
+  }
+
+  // Listar reuniones propias del usuario
+  @Get('user/:userId')
+  async listUserMeetings(@Param('userId') userId: string) {
+    return this.meetingsService.listUserMeetings(userId);
+  }
 
   // Ver participantes activos
   @Get(':meetingId/participants')
   async listParticipants(@Param('meetingId') meetingId: string) {
+    this.logger.log(`[GET /meetings/${meetingId}/participants]`);
     return this.meetingsService.listParticipants(meetingId);
-  }
-
-  // Solicitar amistad
-  @Post('friend/request')
-  async addFriend(
-    @Request() req: { user: { id: string } },
-    @Body() dto: AddFriendDto,
-  ) {
-    return this.meetingsService.addFriend(
-      String(req.user.id),
-      String(dto.addresseeId),
-    );
-  }
-
-  // Aceptar amistad
-  @Post('friend/accept')
-  async acceptFriendship(
-    @Request() req: { user: { id: string } },
-    @Body() dto: AcceptFriendshipDto,
-  ) {
-    return this.meetingsService.acceptFriendship(
-      String(dto.requesterId),
-      String(req.user.id),
-    );
   }
 
   // Invitar a reunión privada
@@ -92,6 +98,9 @@ export class MeetingsController {
     @Request() req: { user: { id: string } },
     @Body() dto: InviteMeetingDto,
   ) {
+    this.logger.log(
+      `[POST /meetings/invite] user: ${JSON.stringify(req.user)}, body: ${JSON.stringify(dto)}`,
+    );
     return this.meetingsService.inviteToMeeting(
       dto.meetingId,
       dto.invitedId,
@@ -105,26 +114,12 @@ export class MeetingsController {
     @Request() req: { user: { id: string } },
     @Body() dto: AcceptInvitationDto,
   ) {
+    this.logger.log(
+      `[POST /meetings/invite/accept] user: ${JSON.stringify(req.user)}, body: ${JSON.stringify(dto)}`,
+    );
     return this.meetingsService.acceptMeetingInvitation(
       dto.invitationId,
       req.user.id,
     );
-  }
-  // Ver amigos aceptados
-  @Get('friend/list')
-  async listFriends(@Request() req: { user: { id: string } }) {
-    return this.meetingsService.listFriends(req.user.id);
-  }
-
-  // Ver solicitudes de amistad pendientes (que yo debo aceptar)
-  @Get('friend/requests')
-  async listPendingFriendRequests(@Request() req: { user: { id: string } }) {
-    return this.meetingsService.listPendingFriendRequests(req.user.id);
-  }
-
-  // Ver invitaciones a reuniones (que yo debo aceptar)
-  @Get('invite/pending')
-  async listPendingInvitations(@Request() req: { user: { id: string } }) {
-    return this.meetingsService.listPendingInvitations(req.user.id);
   }
 }

@@ -7,6 +7,8 @@ import { MeetingParticipant } from '../entities/meeting-participant.entity';
 import { User } from '../entities/user.entity';
 import { Friendship } from '../entities/friendship.entity';
 import { MeetingInvitation } from '../entities/meeting-invitation.entity';
+import { NotificationsGateway } from '../gateways/notifications.gateway';
+import { SignalingGateway } from '../gateways/SignalingGateway.gateway';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { MeetingInvitation } from '../entities/meeting-invitation.entity';
     ]),
   ],
   controllers: [MeetingsController],
-  providers: [MeetingsService],
+  providers: [MeetingsService, NotificationsGateway, SignalingGateway],
   exports: [MeetingsService],
 })
 export class MeetingsModule {}

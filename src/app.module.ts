@@ -9,6 +9,8 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { MeetingsModule } from './meeting/meeting.module';
 import { UserModule } from './user/user.module';
+import { FriendshipModule } from './friendship/friendship.module';
+import { GatewayModule } from './gateways/gateway.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -22,6 +24,8 @@ import { UserModule } from './user/user.module';
     MeetingsModule,
     UserModule,
     AuthModule,
+    FriendshipModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],

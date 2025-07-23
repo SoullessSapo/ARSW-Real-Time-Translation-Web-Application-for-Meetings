@@ -29,7 +29,7 @@ export class AcceptInvitationDto {
 
 export class AddFriendDto {
   @IsUUID()
-  addresseeId: string;
+  addresseeName: string;
 }
 
 export class AcceptFriendshipDto {

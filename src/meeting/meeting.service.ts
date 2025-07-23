@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm'; // <-- Agrega IsNull aquí
 import { Meeting } from '../entities/meeting.entity';
 import { MeetingParticipant } from '../entities/meeting-participant.entity';
 import { User } from '../entities/user.entity';
@@ -13,7 +13,7 @@ import { Friendship } from '../entities/friendship.entity';
 import { MeetingInvitation } from '../entities/meeting-invitation.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { LessThanOrEqual } from 'typeorm';
-import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { NotificationsGateway } from '../gateways/notifications.gateway';
 
 @Injectable()
 export class MeetingsService {
@@ -28,8 +28,26 @@ export class MeetingsService {
     private friendshipRepo: Repository<Friendship>,
     @InjectRepository(MeetingInvitation)
     private invitationRepo: Repository<MeetingInvitation>,
+    // ¡AQUÍ!
+    private notificationsGateway: NotificationsGateway,
   ) {}
+  // ...
+  async deleteMeeting(meetingId: string, userId: string) {
+    const meeting = await this.meetingRepo.findOne({
+      where: { id: meetingId },
+      relations: ['createdBy'],
+    });
+    if (!meeting) throw new NotFoundException('Meeting not found');
+    if (meeting.createdBy.id !== userId)
+      throw new ForbiddenException('Only the creator can delete');
 
+    // Elimina primero los participantes asociados a la reunión
+    await this.participantRepo.delete({ meeting: { id: meetingId } });
+
+    // Ahora elimina la reunión
+    await this.meetingRepo.delete(meetingId);
+    return;
+  }
   // 1. Crear una reunión (type: 'public', 'private', 'friends')
   async createMeeting(title: string, userId: string, type: string = 'public') {
     const user = await this.userRepo.findOne({ where: { id: userId } });
@@ -46,6 +64,22 @@ export class MeetingsService {
         language: user.language,
       }),
     );
+    // Notificar a todos si la reunión es pública
+    if (type === 'public') {
+      this.notificationsGateway.notifyAll('public-meeting-created', {
+        meeting: {
+          id: meeting.id,
+          title: meeting.title,
+          createdBy: {
+            name: user.name,
+            email: user.email,
+            language: user.language,
+          },
+          type: meeting.type,
+          createdAt: meeting.createdAt,
+        },
+      });
+    }
     // Devuelve el meeting con solo los datos necesarios del usuario creador
     return {
       ...meeting,
@@ -93,42 +127,127 @@ export class MeetingsService {
       language: user.language,
     });
     const participants = await this.participantRepo.find({
-    where: { meeting: { id: meetingId }, leftAt: null },
-    relations: ['user'],
-  });
+      where: { meeting: { id: meetingId }, leftAt: IsNull() }, // <-- Cambia null por IsNull()
+      relations: ['user'],
+    });
     for (const p of participants) {
-    if (p.user.id !== userId) {
-      this.notificationsGateway.notifyUser(p.user.id, 'user-joined', {
-        meetingId,
-        userIdJoined: userId,
-        message: 'A user joined your meeting',
-      });
+      if (p.user.id !== userId) {
+        this.notificationsGateway.notifyUser(p.user.id, 'user-joined', {
+          meetingId,
+          userIdJoined: userId,
+          message: 'A user joined your meeting',
+        });
+      }
+      await this.meetingRepo.update(meetingId, { pendingDeleteAt: null });
+
+      await this.participantRepo.save(participant);
+
+      // Devuelve el meeting con solo los datos necesarios del usuario creador
+      return {
+        ...meeting,
+        createdBy: meeting.createdBy
+          ? {
+              name: meeting.createdBy.name,
+              email: meeting.createdBy.email,
+              language: meeting.createdBy.language,
+            }
+          : null,
+      };
     }
-    await this.meetingRepo.update(meetingId, { pendingDeleteAt: null });
+  }
+  // Listar todas las reuniones públicas o activas
+  async listAllMeetings() {
+    // Puedes filtrar solo públicas y activas si tienes un campo "active" o similar
+    const meetings = await this.meetingRepo.find({
+      where: [{ type: 'public' }, { type: 'friends' }],
+      relations: ['createdBy'],
+      order: { createdAt: 'DESC' },
+    });
+    return meetings.map((m) => ({
+      id: m.id,
+      title: m.title,
+      type: m.type,
+      createdBy: {
+        name: m.createdBy?.name,
+        email: m.createdBy?.email,
+        language: m.createdBy?.language,
+      },
+      createdAt: m.createdAt,
+    }));
+  }
 
-    await this.participantRepo.save(participant);
-
-    // Devuelve el meeting con solo los datos necesarios del usuario creador
-    return {
-      ...meeting,
-      createdBy: meeting.createdBy
-        ? {
-            name: meeting.createdBy.name,
-            email: meeting.createdBy.email,
-            language: meeting.createdBy.language,
-          }
-        : null,
-    };
+  // Listar reuniones creadas por un usuario
+  async listUserMeetings(userId: string) {
+    const meetings = await this.meetingRepo.find({
+      where: { createdBy: { id: userId } },
+      relations: ['createdBy'],
+      order: { createdAt: 'DESC' },
+    });
+    return meetings.map((m) => ({
+      id: m.id,
+      title: m.title,
+      type: m.type,
+      createdBy: {
+        name: m.createdBy?.name,
+        email: m.createdBy?.email,
+        language: m.createdBy?.language,
+      },
+      createdAt: m.createdAt,
+    }));
+  }
+  async listFriendsMeetings(userId: string) {
+    // Buscar amigos
+    const friendships = await this.friendshipRepo.find({
+      where: [
+        { requester: { id: userId }, accepted: true },
+        { addressee: { id: userId }, accepted: true },
+      ],
+      relations: ['requester', 'addressee'],
+    });
+    const friendIds = friendships.map((f) =>
+      f.requester.id === userId ? f.addressee.id : f.requester.id,
+    );
+    if (friendIds.length === 0) return [];
+    // Buscar reuniones creadas por amigos
+    const meetings = await this.meetingRepo.find({
+      where: friendIds.map((id) => ({ createdBy: { id } })),
+      relations: ['createdBy'],
+      order: { createdAt: 'DESC' },
+    });
+    return meetings.map((m) => ({
+      id: m.id,
+      title: m.title,
+      type: m.type,
+      createdBy: {
+        id: m.createdBy?.id,
+        name: m.createdBy?.name,
+        email: m.createdBy?.email,
+        language: m.createdBy?.language,
+      },
+      createdAt: m.createdAt,
+    }));
   }
 
   // 3. Salir de una reunión
+
   async leaveMeeting(meetingId: string, userId: string) {
     const participant = await this.participantRepo.findOne({
       where: { meeting: { id: meetingId }, user: { id: userId } },
     });
     if (participant) {
       participant.leftAt = new Date();
-      return this.participantRepo.save(participant);
+      await this.participantRepo.save(participant);
+
+      // Verifica si quedan participantes activos
+      const activeCount = await this.participantRepo.count({
+        where: { meeting: { id: meetingId }, leftAt: IsNull() },
+      });
+
+      if (activeCount === 0) {
+        // Borra la reunión
+        await this.meetingRepo.delete(meetingId);
+      }
+      return participant;
     }
     return null;
   }
@@ -138,7 +257,7 @@ export class MeetingsService {
     const participants = await this.participantRepo.find({
       where: {
         meeting: { id: meetingId },
-        leftAt: require('typeorm').IsNull(),
+        leftAt: IsNull(), // <-- Cambia require('typeorm').IsNull() por IsNull()
       },
       relations: ['user'],
     });
@@ -147,49 +266,6 @@ export class MeetingsService {
       email: p.user.email,
       language: p.user.language,
     }));
-  }
-
-  // 5. Agregar amigo (solicitud)
-  async addFriend(requesterId: string, addresseeId: string) {
-    if (requesterId === addresseeId)
-      throw new BadRequestException('Cannot add yourself');
-    const existing = await this.friendshipRepo.findOne({
-      where: [
-        { requester: { id: requesterId }, addressee: { id: addresseeId } },
-        { requester: { id: addresseeId }, addressee: { id: requesterId } },
-      ],
-    });
-    if (existing) throw new BadRequestException('Friendship already exists');
-    const requester = await this.userRepo.findOne({
-      where: { id: requesterId },
-    });
-    const addressee = await this.userRepo.findOne({
-      where: { id: addresseeId },
-    });
-    if (!requester || !addressee) {
-      throw new NotFoundException('Requester or addressee not found');
-    }
-    const friendship = this.friendshipRepo.create({
-      requester: requester,
-      addressee: addressee,
-      accepted: false,
-    });
-    return this.friendshipRepo.save(friendship);
-  }
-
-  // 6. Aceptar amigo
-  async acceptFriendship(requesterId: string, addresseeId: string) {
-    const friendship = await this.friendshipRepo.findOne({
-      where: {
-        requester: { id: requesterId },
-        addressee: { id: addresseeId },
-        accepted: false,
-      },
-    });
-    if (!friendship)
-      throw new NotFoundException('Friendship request not found');
-    friendship.accepted = true;
-    return this.friendshipRepo.save(friendship);
   }
 
   // 7. Invitar a reunión privada
@@ -234,40 +310,6 @@ export class MeetingsService {
     const meeting = await this.joinMeeting(invitation.meeting.id, userId);
     // meeting ya viene formateado por joinMeeting
     return meeting;
-  }
-
-  // Listar amigos aceptados
-  async listFriends(userId: string) {
-    const friendships = await this.friendshipRepo.find({
-      where: [
-        { requester: { id: userId }, accepted: true },
-        { addressee: { id: userId }, accepted: true },
-      ],
-      relations: ['requester', 'addressee'],
-    });
-
-    // Devuelve el amigo (el otro usuario)
-    return friendships.map((f) => {
-      const friend = f.requester.id === userId ? f.addressee : f.requester;
-      return {
-        name: friend.name,
-        email: friend.email,
-        language: friend.language,
-      };
-    });
-  }
-
-  // Listar solicitudes de amistad pendientes (recibidas)
-  async listPendingFriendRequests(userId: string) {
-    const requests = await this.friendshipRepo.find({
-      where: { addressee: { id: userId }, accepted: false },
-      relations: ['requester'],
-    });
-    return requests.map((f) => ({
-      name: f.requester.name,
-      email: f.requester.email,
-      language: f.requester.language,
-    }));
   }
 
   // Listar invitaciones a reuniones pendientes

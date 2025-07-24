@@ -79,15 +79,10 @@ export class FriendshipService {
 
     return saved;
   }
-  async rejectFriendship(requesterName: string, addresseeId: string) {
-    // Encuentra la solicitud por nombre del requester y tu id
-    const requester = await this.userRepo.findOne({
-      where: { name: requesterName },
-    });
-    if (!requester) throw new NotFoundException('Requester not found');
+  async rejectFriendship(requesterId: string, addresseeId: string) {
     const friendship = await this.friendshipRepo.findOne({
       where: {
-        requester: { id: requester.id },
+        requester: { id: requesterId },
         addressee: { id: addresseeId },
         accepted: false,
       },
@@ -96,7 +91,6 @@ export class FriendshipService {
     if (!friendship)
       throw new NotFoundException('Friendship request not found');
     await this.friendshipRepo.delete({ id: friendship.id });
-    // Puedes notificar si quieres...
     return { success: true };
   }
 
@@ -125,6 +119,8 @@ export class FriendshipService {
       relations: ['requester'],
     });
     return requests.map((f) => ({
+      id: f.requester.id, // <--- AÑADE ESTO
+
       name: f.requester.name,
       email: f.requester.email,
       language: f.requester.language,

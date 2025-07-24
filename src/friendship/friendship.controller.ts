@@ -39,10 +39,10 @@ export class FriendshipController {
   @Post('reject')
   async rejectFriendship(
     @Request() req: { user: { id: string } },
-    @Body() dto: { requesterName: string },
+    @Body() dto: { requesterId: string },
   ) {
     return this.friendshipService.rejectFriendship(
-      dto.requesterName,
+      dto.requesterId,
       req.user.id,
     );
   }

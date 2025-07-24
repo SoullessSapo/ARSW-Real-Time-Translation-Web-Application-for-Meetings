@@ -13,7 +13,7 @@ async function bootstrap() {
   app.useWebSocketAdapter(new IoAdapter(app));
 
   const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Application is running on: http://localhost:${port}`);
   console.log('[BOOT] HTTP + WS en 3000');
 }

@@ -12,10 +12,10 @@ async function bootstrap() {
   });
   app.useWebSocketAdapter(new IoAdapter(app));
 
-  const port = process.env.PORT ?? 3001;
+  const port = process.env.PORT ?? 3000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
-  console.log('[BOOT] HTTP + WS en 3001');
+  console.log('[BOOT] HTTP + WS en 3000');
 }
 bootstrap().catch((error) =>
   console.error('Error starting application:', error),

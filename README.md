@@ -75,16 +75,6 @@ This web application enables real-time translation in virtual meetings, supporti
 
 ---
 
-#### Story 4: Conversation and Audio History
-
-**As** a user,  
-**I want** to access the meeting transcript and audio history,  
-**so that** I can review previous discussions and translations.
-
-**Acceptance Criteria:**
-
-- The user can view transcripts and, optionally, listen to past meeting translations.
-- The system securely stores and retrieves audio and text history.
 
 ---
 

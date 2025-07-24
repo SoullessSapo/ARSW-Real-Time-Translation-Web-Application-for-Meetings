@@ -36,6 +36,16 @@ export class FriendshipController {
       String(req.user.id),
     );
   }
+  @Post('reject')
+  async rejectFriendship(
+    @Request() req: { user: { id: string } },
+    @Body() dto: { requesterName: string },
+  ) {
+    return this.friendshipService.rejectFriendship(
+      dto.requesterName,
+      req.user.id,
+    );
+  }
 
   @Get('list')
   async listFriends(@Request() req: { user: { id: string } }) {

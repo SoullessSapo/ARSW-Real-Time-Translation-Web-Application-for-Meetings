@@ -51,6 +51,7 @@ export class FriendshipService {
     return saved;
   }
 
+  // friendship.service.ts (solo añade el notifyFriendAccepted dentro de acceptFriendship)
   async acceptFriendship(requesterId: string, addresseeId: string) {
     const friendship = await this.friendshipRepo.findOne({
       where: {
@@ -58,11 +59,45 @@ export class FriendshipService {
         addressee: { id: addresseeId },
         accepted: false,
       },
+      relations: ['requester', 'addressee'],
     });
     if (!friendship)
       throw new NotFoundException('Friendship request not found');
+
     friendship.accepted = true;
-    return this.friendshipRepo.save(friendship);
+    const saved = await this.friendshipRepo.save(friendship);
+
+    // Notifica a ambos que ahora son amigos
+    this.notificationsGateway.notifyFriendAccepted(
+      friendship.requester.id,
+      friendship.addressee.name,
+    );
+    this.notificationsGateway.notifyFriendAccepted(
+      friendship.addressee.id,
+      friendship.requester.name,
+    );
+
+    return saved;
+  }
+  async rejectFriendship(requesterName: string, addresseeId: string) {
+    // Encuentra la solicitud por nombre del requester y tu id
+    const requester = await this.userRepo.findOne({
+      where: { name: requesterName },
+    });
+    if (!requester) throw new NotFoundException('Requester not found');
+    const friendship = await this.friendshipRepo.findOne({
+      where: {
+        requester: { id: requester.id },
+        addressee: { id: addresseeId },
+        accepted: false,
+      },
+      relations: ['requester', 'addressee'],
+    });
+    if (!friendship)
+      throw new NotFoundException('Friendship request not found');
+    await this.friendshipRepo.delete({ id: friendship.id });
+    // Puedes notificar si quieres...
+    return { success: true };
   }
 
   async listFriends(userId: string) {

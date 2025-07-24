@@ -1,46 +1,50 @@
-// notifications.gateway.ts
+// gateways/notifications.gateway.ts
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })
 export class NotificationsGateway {
-  @WebSocketServer()
-  server: Server;
+  @WebSocketServer() server: Server;
 
-  // Notifica a un usuario específico por su userId
+  // Al conectarse un cliente lo metemos a un room con su userId
+  handleConnection(client: Socket) {
+    const userId = client.handshake.query.userId as string | undefined;
+    if (userId) client.join(userId);
+  }
+
+  // Utils
   notifyUser(userId: string, event: string, payload: any) {
     this.server.to(userId).emit(event, payload);
   }
-
-  // Notifica a todos los usuarios conectados
   notifyAll(event: string, payload: any) {
     this.server.emit(event, payload);
   }
 
-  // (Opcional) Cuando un cliente se conecta, lo metes en su propio "room" de userId
-  handleConnection(client: any) {
-    const userId = client.handshake.query.userId;
-    if (userId) {
-      client.join(userId);
-    }
+  // ---- Eventos específicos ----
+  notifyPublicMeetingCreated(meeting: any) {
+    this.notifyAll('public-meeting-created', { meeting });
   }
 
-  // Notifica cuando un usuario se une a una reunión
-  notifyUserJoined(userId: string, userName: string) {
-    this.notifyUser(userId, 'user-joined', { userName });
+  notifyMeetingDeleted(meetingId: string, title: string) {
+    this.notifyAll('meeting-deleted', { meetingId, title });
   }
 
-  // Notifica cuando un usuario sale de una reunión
-  notifyUserLeft(userId: string, userName: string) {
-    this.notifyUser(userId, 'user-left', { userName });
+  notifyUserJoined(userId: string, payload: any) {
+    this.notifyUser(userId, 'user-joined', payload);
   }
 
-  // Notifica una solicitud de amistad
+  notifyUserLeft(userId: string, payload: any) {
+    this.notifyUser(userId, 'user-left', payload);
+  }
+
   notifyFriendRequest(userId: string, requesterName: string) {
     this.notifyUser(userId, 'friend-request', { requesterName });
   }
 
-  // Notifica una invitación a reunión
+  notifyFriendAccepted(userId: string, friendName: string) {
+    this.notifyUser(userId, 'friend-accepted', { friendName });
+  }
+
   notifyMeetingInvitation(
     userId: string,
     invitedByName: string,
@@ -50,10 +54,5 @@ export class NotificationsGateway {
       invitedByName,
       meetingTitle,
     });
-  }
-
-  // Notifica a todos sobre una reunión pública creada
-  notifyPublicMeetingCreated(meeting: any) {
-    this.notifyAll('public-meeting-created', { meeting });
   }
 }

@@ -32,6 +32,7 @@ export class MeetingsService {
     private notificationsGateway: NotificationsGateway,
   ) {}
   // ...
+  // meetings.service.ts (solo el método)
   async deleteMeeting(meetingId: string, userId: string) {
     const meeting = await this.meetingRepo.findOne({
       where: { id: meetingId },
@@ -41,20 +42,41 @@ export class MeetingsService {
     if (meeting.createdBy.id !== userId)
       throw new ForbiddenException('Only the creator can delete');
 
-    // Elimina primero los participantes asociados a la reunión
-    await this.participantRepo.delete({ meeting: { id: meetingId } });
+    // Obtén participantes activos antes de borrar (para notificar)
+    const activeParticipants = await this.participantRepo.find({
+      where: { meeting: { id: meetingId }, leftAt: IsNull() },
+      relations: ['user'],
+    });
 
-    // Ahora elimina la reunión
+    // Elimina participantes y la reunión
+    await this.participantRepo.delete({ meeting: { id: meetingId } });
     await this.meetingRepo.delete(meetingId);
+
+    // Notificar a todos que la reunión fue eliminada
+    this.notificationsGateway.notifyMeetingDeleted(meetingId, meeting.title);
+
+    // (Opcional) Notificar directo a los participantes
+    for (const p of activeParticipants) {
+      this.notificationsGateway.notifyUser(p.user.id, 'meeting-deleted', {
+        meetingId,
+        title: meeting.title,
+      });
+    }
     return;
   }
+
   // 1. Crear una reunión (type: 'public', 'private', 'friends')
-  async createMeeting(title: string, userId: string, type: string = 'public') {
+  // Cambia el método createMeeting para normalizar el tipo
+  async createMeeting(title: string, userId: string, type: string = 'PUBLIC') {
     const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    const meeting = this.meetingRepo.create({ title, createdBy: user, type });
+    if (!user) throw new NotFoundException('User not found');
+    // Normaliza tipo a mayúsculas para frontend
+    const typeUpper = type ? type.toUpperCase() : 'PUBLIC';
+    const meeting = this.meetingRepo.create({
+      title,
+      createdBy: user,
+      type: typeUpper,
+    });
     await this.meetingRepo.save(meeting);
     await this.participantRepo.save(
       this.participantRepo.create({
@@ -65,7 +87,7 @@ export class MeetingsService {
       }),
     );
     // Notificar a todos si la reunión es pública
-    if (type === 'public') {
+    if (typeUpper === 'PUBLIC') {
       this.notificationsGateway.notifyAll('public-meeting-created', {
         meeting: {
           id: meeting.id,
@@ -75,12 +97,11 @@ export class MeetingsService {
             email: user.email,
             language: user.language,
           },
-          type: meeting.type,
+          type: meeting.type, // Esto ya va en mayúsculas
           createdAt: meeting.createdAt,
         },
       });
     }
-    // Devuelve el meeting con solo los datos necesarios del usuario creador
     return {
       ...meeting,
       createdBy: {
@@ -157,9 +178,8 @@ export class MeetingsService {
   }
   // Listar todas las reuniones públicas o activas
   async listAllMeetings() {
-    // Puedes filtrar solo públicas y activas si tienes un campo "active" o similar
     const meetings = await this.meetingRepo.find({
-      where: [{ type: 'public' }, { type: 'friends' }],
+      where: [{ type: 'PUBLIC' }, { type: 'FRIENDS' }],
       relations: ['createdBy'],
       order: { createdAt: 'DESC' },
     });
@@ -167,6 +187,7 @@ export class MeetingsService {
       id: m.id,
       title: m.title,
       type: m.type,
+      ownerId: m.createdBy?.id,
       createdBy: {
         name: m.createdBy?.name,
         email: m.createdBy?.email,
@@ -187,6 +208,8 @@ export class MeetingsService {
       id: m.id,
       title: m.title,
       type: m.type,
+      ownerId: m.createdBy?.id, // <-- Añade esta línea
+
       createdBy: {
         name: m.createdBy?.name,
         email: m.createdBy?.email,
@@ -218,6 +241,8 @@ export class MeetingsService {
       id: m.id,
       title: m.title,
       type: m.type,
+      ownerId: m.createdBy?.id, // <-- Añade esta línea
+
       createdBy: {
         id: m.createdBy?.id,
         name: m.createdBy?.name,

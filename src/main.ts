@@ -10,6 +10,7 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
+
   app.useWebSocketAdapter(new IoAdapter(app));
 
   const port = process.env.PORT ?? 3000;

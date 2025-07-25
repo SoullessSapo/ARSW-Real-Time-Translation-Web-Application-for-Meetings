@@ -20,31 +20,40 @@ export class UserService {
   ) {}
 
   async create(registerDto: RegisterDto) {
-    // Check if user with email already exists
-    const existingUser = await this.userRepository.findOne({
-      where: { email: registerDto.email },
-    });
+    try {
+      // Check if user with email already exists
+      const existingUser = await this.userRepository.findOne({
+        where: { email: registerDto.email },
+      });
 
-    if (existingUser) {
-      throw new ConflictException('Email already in use');
+      if (existingUser) {
+        throw new ConflictException('Email already in use');
+      }
+
+      // Hash the password
+      const passwordHash = await bcrypt.hash(registerDto.password, 10);
+
+      // Create user entity
+      const user = this.userRepository.create({
+        name: registerDto.name,
+        email: registerDto.email,
+        passwordHash,
+        language: registerDto.language,
+      });
+
+      // Save user
+      await this.userRepository.save(user);
+
+      const { passwordHash: _, ...result } = user;
+      return result;
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException(
+          'Ya existe un usuario con ese nombre o email.',
+        );
+      }
+      throw error;
     }
-
-    // Hash the password
-    const passwordHash = await bcrypt.hash(registerDto.password, 10);
-
-    // Create user entity
-    const user = this.userRepository.create({
-      name: registerDto.name,
-      email: registerDto.email,
-      passwordHash,
-      language: registerDto.language,
-    });
-
-    // Save user
-    await this.userRepository.save(user);
-
-    const { passwordHash: _, ...result } = user;
-    return result;
   }
 
   async findOne(id: string) {

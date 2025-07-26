@@ -11,6 +11,7 @@ import { MeetingsModule } from './meeting/meeting.module';
 import { UserModule } from './user/user.module';
 import { FriendshipModule } from './friendship/friendship.module';
 import { GatewayModule } from './gateways/gateway.module';
+
 @Module({
   imports: [
     AppConfigModule,
